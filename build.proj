@@ -8,7 +8,7 @@
     <OutputPath>$(MSBuildThisFileDirectory)\BuildOutput\</OutputPath>
     <TestOutputPath>$(MSBuildThisFileDirectory)\TestBuildOutput\</TestOutputPath>
     <TestResultsPath>$(MSBuildThisFileDirectory)\TestResultsOutput\</TestResultsPath>
-    <FooTarget Condition=" '$(FooTarget)'=='' ">$(MSBuildThisFileDirectory)\TargetOutput</FooTarget>
+    <DeployTarget Condition=" '$(DeployTarget)'=='' ">$(MSBuildThisFileDirectory)\TargetOutput</DeployTarget>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(XunitPath)xunit.runner.msbuild.dll"  TaskName="Xunit.Runner.MSBuild.xunit" />
@@ -76,7 +76,7 @@
       <FilesToCopy Include="$(BUILDTEMP)_PublishedWebsites\MvcApp\**\*.*"/>
      </ItemGroup>
     <Copy SourceFiles="@(FilesToCopy)"
-          DestinationFiles="@(FilesToCopy->'$(FooTarget)\%(RecursiveDir)%(Filename)%(Extension)')" />
+          DestinationFiles="@(FilesToCopy->'$(DeployTarget)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
   
 </Project>
