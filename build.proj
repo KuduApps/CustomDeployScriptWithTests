@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="BuildAndPublish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ToolsPath>$(MSBuildThisFileDirectory)\tools\</ToolsPath>
+    <XunitPath>$(ToolsPath)xunit\</XunitPath>
+    <BUILDTEMP Condition=" '$(BUILDTEMP)'=='' ">$(MSBuildThisFileDirectory)\publishOutput\</BUILDTEMP>
+    <SolutionDir>$(MSBuildThisFileDirectory)\</SolutionDir>
+    <OutputPath>$(MSBuildThisFileDirectory)\BuildOutput\</OutputPath>
+    <TestOutputPath>$(MSBuildThisFileDirectory)\TestBuildOutput\</TestOutputPath>
+    <TestResultsPath>$(MSBuildThisFileDirectory)\TestResultsOutput\</TestResultsPath>
+    <FooTarget Condition=" '$(FooTarget)'=='' ">$(MSBuildThisFileDirectory)\TargetOutput</FooTarget>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(XunitPath)xunit.runner.msbuild.dll"  TaskName="Xunit.Runner.MSBuild.xunit" />
+
+  <!-- TARGET: BuildAndPublish-->
+  <!-- property groups-->
+  <PropertyGroup>
+    <BuildAndPublishDependsOn>BuildProjects;ExecuteTests;Publish</BuildAndPublishDependsOn>
+  </PropertyGroup>
+  <!-- task definition-->
+  <Target Name="BuildAndPublish" DependsOnTargets="$(BuildAndPublishDependsOn)"/>
+
+  <!-- TARGET: Prepare for build-->
+  <Target Name="PrepareForBuild">
+    <MakeDir Directories="$(OutputPath)" />
+    <MakeDir Directories="$(TestOutputPath)" />
+  </Target>
+
+  <!-- TARGET: build projects-->
+  <!-- item groups-->
+  <ItemGroup>
+    <ProjectsToBuild Include="$(MSBuildThisFileDirectory)\MvcApp\MvcApp.csproj"/>
+    <TestProjects Include="$(MSBuildThisFileDirectory)\FunctionalTests\FunctionalTests.csproj"/>
+  </ItemGroup>
+  <!-- property groups-->
+  <PropertyGroup>
+    <BuildProjectDependsOn>PrepareForBuild</BuildProjectDependsOn>
+  </PropertyGroup>
+  <!-- target definition-->
+  <Target Name ="BuildProjects" DependsOnTargets="$(BuildProjectDependsOn)">
+    <MSBuild Projects="@(ProjectsToBuild)"
+             Targets="pipelinePreDeployCopyAllFilesToOneFolder"
+             Properties="OutDir=$(BUILDTEMP)
+             " />
+    <MSBuild Projects="@(TestProjects)"
+             Properties="OutDir=$(TestOutputPath);" />
+  </Target>
+
+  <!-- TARGET: ExecuteTests-->
+  <!-- property groups-->
+  <PropertyGroup>
+    <ExecuteTestsDependsOn>BuildProjects</ExecuteTestsDependsOn>
+  </PropertyGroup>
+  <!-- target definition-->
+  <Target Name="ExecuteTests" DependsOnTargets="$(ExecuteTestsDependsOn)">
+    <ItemGroup>
+      <_AssembliesToTest Include="$(TestOutputPath)\\*.dll;$(TestOutputPath)\\*.exe;" />
+    </ItemGroup>
+    <Delete Files="$(TestResultsPath)\FunctionalTests.XunitResults.%(_AssembliesToTest.Filename).xml"></Delete>
+    <MakeDir Directories="$(TestResultsPath)\" />
+    
+    <xunit Assembly="@(_AssembliesToTest)"
+           Xml="$(TestResultsPath)\FunctionalTests.XunitResults.%(_AssembliesToTest.Filename).xml"
+           Verbose="true" />
+  </Target>
+
+  <!-- TARGET: Publish-->
+  <!-- property groups-->
+  <PropertyGroup>
+    <PublishDependsOn>ExecuteTests</PublishDependsOn>
+  </PropertyGroup>
+  <!-- target definition-->
+  <Target Name="Publish" DependsOnTargets="$(PublishDependsOn)">
+     <ItemGroup>
+      <FilesToCopy Include="$(BUILDTEMP)_PublishedWebsites\MvcApp\**\*.*"/>
+     </ItemGroup>
+    <Copy SourceFiles="@(FilesToCopy)"
+          DestinationFiles="@(FilesToCopy->'$(FooTarget)\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+  
+</Project>
