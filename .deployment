@@ -1,2 +1,2 @@
 [config]
-command = msbuild build.proj /p:DeployTarget="%TARGET%"
+command = SET EnableNuGetPackageRestore=1 && msbuild build.proj /p:DeployTarget="%TARGET%" 
