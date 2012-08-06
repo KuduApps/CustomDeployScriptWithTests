@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="RunAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -167,26 +167,6 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
-  <Target Name="RunAll" DependsOnTargets="Build; RunTests; pipelinePreDeployCopyAllFilesToOneFolder" />
-  <UsingTask AssemblyFile="$(XunitPath)xunit.runner.msbuild.dll"
-           TaskName="Xunit.Runner.MSBuild.xunit" />
-  <Target Name="CreateOutputPath">
-    <Delete Files="$(TestResultsPath)\FunctionalTests.XunitResults.xml"></Delete>
-    <MakeDir Directories="$(TestResultsPath)" Condition="!Exists('$(TestResultsPath)')" />
-  </Target>
-  <Target Name="RunTests" DependsOnTargets="CreateOutputPath">
-    <xunit Assembly="$(ProjectRoot)\FunctionalTests\bin\$(Configuration)\FunctionalTests.dll"
-           Xml="$(TestResultsPath)\FunctionalTests.XunitResults.xml"
-           Verbose="true" />
-  </Target>
-  <!--Target Name="CopyFiles" DependsOnTargets="RunTests" Condition="Exists('$(TestResultsPath)\FunctionalTests.XunitResults.xml')">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'$(DestFilesPath)\%(RecursiveDir)%(Filename)%(Extension)')"></Copy>
-  </Target-->
-
-  <!--<Target Name="MSTest" Condition=" '$(Configuration)' == 'Debug'">
-    <MakeDir Directories="$(TestResultsDir)" />
-    <Exec Command="$(MsTestPath)mstest.exe /testcontainer:$(TestDir)MvcApp.Tests.dll /resultsfile:$(TestResultsDir)\results.xml" />
-  </Target>-->
   <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
     <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
   </Target>
@@ -210,4 +190,5 @@
     </VisualStudio>
   </ProjectExtensions>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+
 </Project>
