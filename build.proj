@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ToolsPath>$(MSBuildThisFileDirectory)\tools\</ToolsPath>
     <XunitPath>$(ToolsPath)xunit\</XunitPath>
-    <BUILDTEMP Condition=" '$(BUILDTEMP)'=='' ">$(MSBuildThisFileDirectory)\publishOutput\</BUILDTEMP>
+    <BUILDTEMP Condition=" '$(BUILDTEMP)'=='' ">$(MSBuildThisFileDirectory)\publishOutput</BUILDTEMP>
     <SOURCE Condition=" '$(SOURCE)'=='' ">$(MSBuildThisFileDirectory)\</SOURCE>
     <SolutionDir>$(MSBuildThisFileDirectory)\</SolutionDir>
     <OutputPath>$(MSBuildThisFileDirectory)\BuildOutput\</OutputPath>
@@ -42,7 +42,7 @@
   <Target Name ="BuildProjects" DependsOnTargets="$(BuildProjectDependsOn)">
     <MSBuild Projects="@(ProjectsToBuild)"
              Targets="pipelinePreDeployCopyAllFilesToOneFolder"
-             Properties="OutDir=$(BUILDTEMP);SolutionDir=$(SOURCE)"
+             Properties="OutDir=$(BUILDTEMP)\;SolutionDir=$(SOURCE)"
               />
     <MSBuild Projects="@(TestProjects)"
              Properties="OutDir=$(TestOutputPath);" />
