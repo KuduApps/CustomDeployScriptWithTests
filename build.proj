@@ -43,7 +43,7 @@
     <MSBuild Projects="@(ProjectsToBuild)"
              Targets="pipelinePreDeployCopyAllFilesToOneFolder"
              Properties="OutDir=$(BUILDTEMP);SolutionDir=$(SOURCE)"
-             " />
+              />
     <MSBuild Projects="@(TestProjects)"
              Properties="OutDir=$(TestOutputPath);" />
   </Target>
