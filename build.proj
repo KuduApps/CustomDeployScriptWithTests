@@ -45,7 +45,7 @@
              Properties="OutDir=$(BUILDTEMP)\;SolutionDir=$(SOURCE)"
               />
     <MSBuild Projects="@(TestProjects)"
-             Properties="OutDir=$(TestOutputPath);" />
+             Properties="OutDir=$(TestOutputPath);SolutionDir=$(SOURCE)" />
   </Target>
 
   <!-- TARGET: ExecuteTests-->
